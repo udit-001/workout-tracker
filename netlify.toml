@@ -1,0 +1,18 @@
+[build]
+  publish = "src"
+  command = "pnpm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
+  PNPM_VERSION = "8"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Cache settings for better performance
+[[headers]]
+  for = "/*"
+    [headers.values]
+    Cache-Control = "public, max-age=3600" 
