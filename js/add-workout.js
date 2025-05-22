@@ -208,7 +208,7 @@ if (workoutDays.length === 0) {
           }
           
           // Reset form and button
-          addExerciseButton.textContent = 'Add Exercise';
+          addExerciseButton.textContent = 'Update Exercise';
           // Remove the update handler
           addExerciseButton.onclick = null;
           // Add back the add handler
