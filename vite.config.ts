@@ -48,10 +48,10 @@ export default defineConfig({
                         url: '/',
                     },
                     {
-                        name: 'Add Workout',
+                        name: 'Add Exercise',
                         short_name: 'Add',
-                        description: 'Add a new workout',
-                        url: '/add-workout',
+                        description: 'Add a new exercise',
+                        url: '/add-exercise',
                     },
                     {
                         name: 'View Workouts',
@@ -102,8 +102,9 @@ export default defineConfig({
                 index: resolve(__dirname, "index.html"),
                 workout: resolve(__dirname, "workout.html"),
                 workouts: resolve(__dirname, "workouts.html"),
-                'add-workout': resolve(__dirname, "add-workout.html"),
-                'manage-days': resolve(__dirname, "manage-days.html")
+                'add-exercise': resolve(__dirname, "add-exercise.html"),
+                'manage-days': resolve(__dirname, "manage-days.html"),
+                preferences: resolve(__dirname, "preferences.html")
             }
         },
         outDir: 'dist',

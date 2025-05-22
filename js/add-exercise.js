@@ -1,4 +1,4 @@
-import '../css/style.css'
+import "../css/style.css"
 
 // Initialize with prefilled days of the week
 const workoutDays = JSON.parse(localStorage.getItem('workoutDays')) || [];
