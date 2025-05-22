@@ -252,6 +252,24 @@ function stopRestTimer() {
   startRestTimerButton.title = "Start Rest Timer";
   startRestTimerButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
   startRestTimerButton.classList.add('bg-purple-500', 'hover:bg-purple-600');
+
+  // If timer finished (not manually stopped), show restart button
+  if (restSecondsRemaining === 0) {
+    startRestTimerButton.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+      </svg>
+    `;
+    startRestTimerButton.title = "Restart Rest Timer";
+  }
+}
+
+// Function to restart rest timer
+function restartRestTimer() {
+  const preferences = loadPreferences();
+  restSecondsRemaining = preferences.defaultRestDuration || 60;
+  updateRestTimerDisplay();
+  startRestTimer();
 }
 
 // Function to skip rest
@@ -265,7 +283,13 @@ function skipRest() {
 }
 
 // Add event listeners
-startRestTimerButton.addEventListener('click', startRestTimer);
+startRestTimerButton.addEventListener('click', () => {
+  if (restSecondsRemaining === 0) {
+    restartRestTimer();
+  } else {
+    startRestTimer();
+  }
+});
 skipRestButton.addEventListener('click', skipRest);
 
 // End workout
