@@ -84,18 +84,29 @@ function renderWorkoutDays() {
       day.exercises.forEach((exercise, exerciseIndex) => {
         const exerciseItem = document.createElement('li');
         exerciseItem.className = 'border border-gray-100 p-4 rounded bg-gray-50';
+        
+        // Format reps display
+        let repsDisplay = '';
+        if (exercise.minReps && exercise.maxReps) {
+          repsDisplay = `${exercise.minReps}-${exercise.maxReps} reps`;
+        } else if (exercise.reps) {
+          repsDisplay = `${exercise.reps} reps`;
+        }
+        
         exerciseItem.innerHTML = `
           <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
             <div class="flex-1">
               <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
                 <h3 class="text-lg font-semibold text-gray-800">${exercise.name}</h3>
                 <div class="flex flex-wrap gap-2">
-                  <div class="flex items-center bg-blue-50 px-2.5 py-1 rounded-full">
-                    <svg class="w-3.5 h-3.5 text-blue-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
-                    <span class="text-sm text-blue-600 font-medium">${exercise.reps} reps</span>
-                  </div>
+                  ${repsDisplay ? `
+                    <div class="flex items-center bg-blue-50 px-2.5 py-1 rounded-full">
+                      <svg class="w-3.5 h-3.5 text-blue-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                      <span class="text-sm text-blue-600 font-medium">${repsDisplay}</span>
+                    </div>
+                  ` : ''}
                   <div class="flex items-center bg-green-50 px-2.5 py-1 rounded-full">
                     <svg class="w-3.5 h-3.5 text-green-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -123,7 +134,7 @@ function renderWorkoutDays() {
               </div>
             </div>
             <div class="flex gap-2 sm:ml-4">
-              <a href="add-workout.html?hash=${exercise.id}&day=${dayIndex}&exercise=${exerciseIndex}" 
+              <a href="add-exercise.html?hash=${exercise.id}&day=${dayIndex}&exercise=${exerciseIndex}" 
                  class="edit-exercise-btn bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />

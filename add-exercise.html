@@ -93,16 +93,35 @@
                     class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-gray-700 font-bold mb-2">Reps</label>
+                <div>
+                  <label class="block text-gray-700 font-bold mb-2">Sets</label>
+                  <input type="number" id="exerciseSets" placeholder="Number of sets" 
+                    class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
+                </div>
+
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <label class="block text-gray-400 font-medium">Reps</label>
+                    <label class="flex items-center space-x-2 text-sm text-gray-600">
+                      <input type="checkbox" id="useRepRange" class="rounded border-gray-300 text-blue-600 focus:ring-blue-200">
+                      <span>Use Range</span>
+                    </label>
+                  </div>
+                  <div id="singleRepInput" class="space-y-2">
                     <input type="number" id="exerciseReps" placeholder="Number of reps" 
                       class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
                   </div>
-                  <div>
-                    <label class="block text-gray-700 font-bold mb-2">Sets</label>
-                    <input type="number" id="exerciseSets" placeholder="Number of sets" 
-                      class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
+                  <div id="repRangeInputs" class="hidden space-y-2">
+                    <div class="grid grid-cols-2 gap-2">
+                      <div>
+                        <input type="number" id="minReps" placeholder="Min reps" 
+                          class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
+                      </div>
+                      <div>
+                        <input type="number" id="maxReps" placeholder="Max reps" 
+                          class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
+                      </div>
+                    </div>
                   </div>
                 </div>
 

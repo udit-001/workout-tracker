@@ -13,6 +13,11 @@ const exerciseNotesInput = document.getElementById('exerciseNotes');
 const addExerciseButton = document.getElementById('addExercise');
 const toast = document.getElementById('toast');
 const formContainer = document.querySelector('.bg-white.p-4');
+const useRepRange = document.getElementById('useRepRange');
+const singleRepInput = document.getElementById('singleRepInput');
+const repRangeInputs = document.getElementById('repRangeInputs');
+const minRepsInput = document.getElementById('minReps');
+const maxRepsInput = document.getElementById('maxReps');
 
 // Check if there are any workout days
 if (workoutDays.length === 0) {
@@ -37,12 +42,39 @@ if (workoutDays.length === 0) {
     });
   }
 
+  // Toggle between single reps and rep range
+  useRepRange.addEventListener('change', () => {
+    if (useRepRange.checked) {
+      singleRepInput.classList.add('hidden');
+      repRangeInputs.classList.remove('hidden');
+      exerciseRepsInput.value = '';
+    } else {
+      singleRepInput.classList.remove('hidden');
+      repRangeInputs.classList.add('hidden');
+      minRepsInput.value = '';
+      maxRepsInput.value = '';
+    }
+    validateForm();
+  });
+
   // Function to check if all required fields are filled
   function validateForm() {
     const isDaySelected = daySelect.value !== '';
     const isNameFilled = exerciseNameInput.value.trim() !== '';
-    const isRepsFilled = exerciseRepsInput.value !== '';
     const isSetsFilled = exerciseSetsInput.value !== '';
+    
+    let isRepsValid = true; // Default to true since reps are now optional
+    if (useRepRange.checked) {
+      const minReps = minRepsInput.value;
+      const maxReps = maxRepsInput.value;
+      // Only validate if either min or max is filled
+      if (minReps || maxReps) {
+        isRepsValid = minReps && maxReps && parseInt(minReps) <= parseInt(maxReps);
+      }
+    } else if (exerciseRepsInput.value) {
+      // Only validate if reps value is provided
+      isRepsValid = exerciseRepsInput.value !== '';
+    }
     
     // Check if we're in edit mode
     const isEditMode = addExerciseButton.textContent === 'Update Exercise';
@@ -57,11 +89,13 @@ if (workoutDays.length === 0) {
         const originalExercise = workoutDays[dayIndex].exercises[exerciseIndex];
         const hasChanges = 
           originalExercise.name !== exerciseNameInput.value.trim() ||
-          originalExercise.reps !== exerciseRepsInput.value ||
           originalExercise.sets !== exerciseSetsInput.value ||
           originalExercise.video !== exerciseVideoInput.value.trim() ||
           originalExercise.notes !== exerciseNotesInput.value.trim() ||
-          originalExercise.day !== daySelect.value;
+          originalExercise.day !== daySelect.value ||
+          (useRepRange.checked ? 
+            (originalExercise.minReps !== minRepsInput.value || originalExercise.maxReps !== maxRepsInput.value) :
+            originalExercise.reps !== exerciseRepsInput.value);
         
         addExerciseButton.disabled = !hasChanges;
         addExerciseButton.classList.toggle('opacity-50', !hasChanges);
@@ -70,8 +104,8 @@ if (workoutDays.length === 0) {
       }
     }
     
-    // For new exercise mode, require all fields
-    const isValid = isDaySelected && isNameFilled && isRepsFilled && isSetsFilled;
+    // For new exercise mode, require all fields except reps
+    const isValid = isDaySelected && isNameFilled && isSetsFilled && isRepsValid;
     addExerciseButton.disabled = !isValid;
     addExerciseButton.classList.toggle('opacity-50', !isValid);
     addExerciseButton.classList.toggle('cursor-not-allowed', !isValid);
@@ -81,6 +115,8 @@ if (workoutDays.length === 0) {
   daySelect.addEventListener('change', validateForm);
   exerciseNameInput.addEventListener('input', validateForm);
   exerciseRepsInput.addEventListener('input', validateForm);
+  minRepsInput.addEventListener('input', validateForm);
+  maxRepsInput.addEventListener('input', validateForm);
   exerciseSetsInput.addEventListener('input', validateForm);
   exerciseVideoInput.addEventListener('input', validateForm);
   exerciseNotesInput.addEventListener('input', validateForm);
@@ -126,15 +162,30 @@ if (workoutDays.length === 0) {
         // Populate form with exercise data
         daySelect.value = exercise.day;
         exerciseNameInput.value = exercise.name;
-        exerciseRepsInput.value = exercise.reps;
         exerciseSetsInput.value = exercise.sets;
         exerciseVideoInput.value = exercise.video || '';
         exerciseNotesInput.value = exercise.notes || '';
+        
+        // Handle reps based on whether it's a range or single value
+        if (exercise.minReps && exercise.maxReps) {
+          useRepRange.checked = true;
+          singleRepInput.classList.add('hidden');
+          repRangeInputs.classList.remove('hidden');
+          minRepsInput.value = exercise.minReps;
+          maxRepsInput.value = exercise.maxReps;
+        } else if (exercise.reps) {
+          useRepRange.checked = false;
+          singleRepInput.classList.remove('hidden');
+          repRangeInputs.classList.add('hidden');
+          exerciseRepsInput.value = exercise.reps;
+        }
         
         console.log('Populated form values:', {
           day: daySelect.value,
           name: exerciseNameInput.value,
           reps: exerciseRepsInput.value,
+          minReps: minRepsInput.value,
+          maxReps: maxRepsInput.value,
           sets: exerciseSetsInput.value,
           video: exerciseVideoInput.value,
           notes: exerciseNotesInput.value
@@ -172,13 +223,21 @@ if (workoutDays.length === 0) {
           const updatedExercise = {
             ...exercise,
             name: exerciseNameInput.value.trim(),
-            reps: exerciseRepsInput.value,
             sets: exerciseSetsInput.value,
             video: exerciseVideoInput.value.trim(),
             notes: exerciseNotesInput.value.trim(),
             day: daySelect.value,
             updatedAt: Date.now()
           };
+
+          // Add reps based on whether range is used
+          if (useRepRange.checked) {
+            updatedExercise.minReps = minRepsInput.value;
+            updatedExercise.maxReps = maxRepsInput.value;
+          } else {
+            updatedExercise.reps = exerciseRepsInput.value;
+          }
+
           console.log('Updated exercise:', updatedExercise);
 
           // Update the exercise ID
@@ -246,8 +305,28 @@ if (workoutDays.length === 0) {
     } else {
       // Set default values from preferences for new exercises
       const preferences = loadPreferences();
-      exerciseRepsInput.value = preferences.defaultReps;
-      exerciseSetsInput.value = preferences.defaultSets;
+      
+      // Handle default reps (single or range)
+      if (preferences.defaultMinReps && preferences.defaultMaxReps) {
+        useRepRange.checked = true;
+        singleRepInput.classList.add('hidden');
+        repRangeInputs.classList.remove('hidden');
+        minRepsInput.value = preferences.defaultMinReps;
+        maxRepsInput.value = preferences.defaultMaxReps;
+      } else if (preferences.defaultReps) {
+        useRepRange.checked = false;
+        singleRepInput.classList.remove('hidden');
+        repRangeInputs.classList.add('hidden');
+        exerciseRepsInput.value = preferences.defaultReps;
+      } else {
+        // No default reps set, show single reps input by default
+        useRepRange.checked = false;
+        singleRepInput.classList.remove('hidden');
+        repRangeInputs.classList.add('hidden');
+        exerciseRepsInput.value = '';
+      }
+      
+      exerciseSetsInput.value = preferences.defaultSets || '';
       
       // If a day was specified in the URL, select it
       if (selectedDay) {
@@ -281,7 +360,8 @@ if (workoutDays.length === 0) {
 
   // Function to create a hash of exercise values
   function createExerciseHash(exercise) {
-    return `${exercise.name.toLowerCase()}_${exercise.reps}_${exercise.sets}_${exercise.day.toLowerCase()}`;
+    const repValue = exercise.minReps ? `${exercise.minReps}-${exercise.maxReps}` : exercise.reps;
+    return `${exercise.name.toLowerCase()}_${repValue}_${exercise.sets}_${exercise.day.toLowerCase()}`;
   }
 
   // Function to check if exercise is a duplicate
@@ -309,13 +389,23 @@ if (workoutDays.length === 0) {
     if (dayName) {
       const exercise = {
         name: exerciseNameInput.value.trim(),
-        reps: exerciseRepsInput.value,
         sets: exerciseSetsInput.value,
         video: exerciseVideoInput.value.trim(),
         notes: exerciseNotesInput.value.trim(),
         day: dayName,
         createdAt: Date.now()
       };
+
+      // Add reps only if provided
+      if (useRepRange.checked) {
+        if (minRepsInput.value && maxRepsInput.value) {
+          exercise.minReps = minRepsInput.value;
+          exercise.maxReps = maxRepsInput.value;
+        }
+      } else if (exerciseRepsInput.value) {
+        exercise.reps = exerciseRepsInput.value;
+      }
+
       exercise.id = createExerciseHash(exercise);
       let dayIndex = workoutDays.findIndex(d => d.name === dayName);
       if (dayIndex === -1) {
@@ -366,9 +456,14 @@ if (workoutDays.length === 0) {
     daySelect.value = '';
     exerciseNameInput.value = '';
     exerciseRepsInput.value = '';
+    minRepsInput.value = '';
+    maxRepsInput.value = '';
     exerciseSetsInput.value = '';
     exerciseVideoInput.value = '';
     exerciseNotesInput.value = '';
+    useRepRange.checked = false;
+    singleRepInput.classList.remove('hidden');
+    repRangeInputs.classList.add('hidden');
     
     // Reset video preview
     const previewIframe = document.getElementById('videoPreview');

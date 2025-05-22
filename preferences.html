@@ -79,23 +79,53 @@
           <div class="max-w-2xl mx-auto">
             <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100">
               <form id="preferencesForm" class="space-y-4 sm:space-y-6">
-                <!-- Default Reps -->
-                <div>
-                  <label for="defaultReps" class="block text-gray-700 font-bold mb-2">Default Reps</label>
-                  <input type="number" id="defaultReps" min="1" max="100" 
-                    class="w-full p-3 sm:p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200 text-base" />
+                <!-- Reps -->
+                <div class="mb-6">
+                  <label for="defaultReps" class="block text-gray-700 font-bold mb-3">Reps</label>
+                  <div class="space-y-6">
+                    <!-- Single Reps Option -->
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                      <input type="number" id="defaultReps" min="1" max="100" 
+                        class="w-full sm:w-24 px-3 py-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200 text-base" 
+                        placeholder="10" />
+                      <span class="text-gray-500 text-sm">Single number of reps</span>
+                    </div>
+
+                    <!-- Or Divider -->
+                    <div class="flex items-center gap-3">
+                      <div class="h-px bg-gray-200 flex-1"></div>
+                      <span class="text-gray-400 text-sm">OR</span>
+                      <div class="h-px bg-gray-200 flex-1"></div>
+                    </div>
+
+                    <!-- Rep Range Option -->
+                    <div class="space-y-3">
+                      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                          <input type="number" id="defaultMinReps" min="1" max="100" 
+                            class="w-full sm:w-24 px-3 py-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200 text-base" 
+                            placeholder="8" />
+                          <span class="text-gray-500 whitespace-nowrap">to</span>
+                          <input type="number" id="defaultMaxReps" min="1" max="100" 
+                            class="w-full sm:w-24 px-3 py-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200 text-base" 
+                            placeholder="12" />
+                        </div>
+                      </div>
+                      <span class="text-gray-500 text-sm block">Range of reps (min-max)</span>
+                    </div>
+                  </div>
                 </div>
 
-                <!-- Default Sets -->
+                <!-- Sets -->
                 <div>
-                  <label for="defaultSets" class="block text-gray-700 font-bold mb-2">Default Sets</label>
+                  <label for="defaultSets" class="block text-gray-700 font-bold mb-2">Sets</label>
                   <input type="number" id="defaultSets" min="1" max="20" 
                     class="w-full p-3 sm:p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200 text-base" />
                 </div>
 
-                <!-- Default Rest Duration -->
+                <!-- Rest Duration -->
                 <div>
-                  <label for="defaultRestDuration" class="block text-gray-700 font-bold mb-2">Default Rest Duration (seconds)</label>
+                  <label for="defaultRestDuration" class="block text-gray-700 font-bold mb-2">Rest Duration (seconds)</label>
                   <input type="number" id="defaultRestDuration" min="0" max="300" 
                     class="w-full p-3 sm:p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200 text-base" />
                 </div>

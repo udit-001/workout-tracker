@@ -48,6 +48,15 @@ function updateWorkoutView() {
   const exercise = day.exercises[currentExerciseIndex];
   
   currentDay.textContent = day.name;
+  
+  // Format reps display
+  let repsDisplay = '';
+  if (exercise.minReps && exercise.maxReps) {
+    repsDisplay = `${exercise.minReps}-${exercise.maxReps} reps`;
+  } else if (exercise.reps) {
+    repsDisplay = `${exercise.reps} reps`;
+  }
+  
   currentExercise.innerHTML = `
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-2xl font-bold text-gray-700">${exercise.name}</h3>
@@ -59,12 +68,14 @@ function updateWorkoutView() {
       </div>
     </div>
     <div class="flex gap-4 mb-4">
-      <div class="flex items-center bg-blue-50 px-3 py-1 rounded-full">
-        <svg class="w-4 h-4 text-blue-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-        </svg>
-        <span class="text-blue-600 font-medium">${exercise.reps} reps</span>
-      </div>
+      ${repsDisplay ? `
+        <div class="flex items-center bg-blue-50 px-3 py-1 rounded-full">
+          <svg class="w-4 h-4 text-blue-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+          <span class="text-blue-600 font-medium">${repsDisplay}</span>
+        </div>
+      ` : ''}
       <div class="flex items-center bg-green-50 px-3 py-1 rounded-full">
         <svg class="w-4 h-4 text-green-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -72,10 +83,11 @@ function updateWorkoutView() {
         <span class="text-green-600 font-medium">Set ${currentSet} of ${exercise.sets}</span>
       </div>
     </div>
-    ${exercise.video ? 
-      `<div class="aspect-video mb-4">
+    ${exercise.video ? `
+      <div class="aspect-video mb-4">
         <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/${getYouTubeId(exercise.video)}" frameborder="0" allow="encrypted-media" allowfullscreen></iframe>
-      </div>` : ''}
+      </div>
+    ` : ''}
     ${exercise.notes ? `<p class="text-gray-500 mb-4">Notes: ${exercise.notes}</p>` : ''}
   `;
   
