@@ -118,11 +118,11 @@
                     class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200 h-24"></textarea>
                 </div>
 
-                <div id="videoPreviewContainer" class="aspect-w-16 aspect-h-9">
-                  <div id="videoPreviewPlaceholder" class="w-full h-64 bg-gray-50 border border-gray-100 rounded flex items-center justify-center text-gray-400">
+                <div id="videoPreviewContainer" class="relative w-full aspect-video">
+                  <div id="videoPreviewPlaceholder" class="absolute inset-0 bg-gray-50 border border-gray-100 rounded flex items-center justify-center text-gray-400">
                     Video preview will show up here
                   </div>
-                  <iframe id="videoPreview" class="w-full h-64 hidden" frameborder="0" allowfullscreen></iframe>
+                  <iframe id="videoPreview" class="absolute inset-0 w-full h-full hidden rounded" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
 
                 <div id="errorMessage" class="hidden text-red-500 text-sm mb-2"></div>

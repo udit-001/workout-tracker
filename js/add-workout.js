@@ -85,6 +85,24 @@ if (workoutDays.length === 0) {
   exerciseVideoInput.addEventListener('input', validateForm);
   exerciseNotesInput.addEventListener('input', validateForm);
 
+  // Add event listener for video preview
+  exerciseVideoInput.addEventListener('input', () => {
+    const videoUrl = exerciseVideoInput.value.trim();
+    const videoId = getYouTubeId(videoUrl);
+    const previewIframe = document.getElementById('videoPreview');
+    const placeholder = document.getElementById('videoPreviewPlaceholder');
+    
+    if (videoId) {
+      previewIframe.src = `https://www.youtube-nocookie.com/embed/${videoId}`;
+      previewIframe.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+    } else {
+      previewIframe.src = '';
+      previewIframe.classList.add('hidden');
+      placeholder.classList.remove('hidden');
+    }
+  });
+
   // Initialize button state
   validateForm();
 
@@ -230,6 +248,12 @@ if (workoutDays.length === 0) {
       const preferences = loadPreferences();
       exerciseRepsInput.value = preferences.defaultReps;
       exerciseSetsInput.value = preferences.defaultSets;
+      
+      // If a day was specified in the URL, select it
+      if (selectedDay) {
+        daySelect.value = selectedDay;
+        validateForm();
+      }
     }
   });
 
@@ -283,13 +307,12 @@ if (workoutDays.length === 0) {
   function addExerciseHandler() {
     const dayName = daySelect.value;
     if (dayName) {
-      const preferences = loadPreferences();
       const exercise = {
-        name: '',
-        reps: preferences.defaultReps,
-        sets: preferences.defaultSets,
-        video: '',
-        notes: '',
+        name: exerciseNameInput.value.trim(),
+        reps: exerciseRepsInput.value,
+        sets: exerciseSetsInput.value,
+        video: exerciseVideoInput.value.trim(),
+        notes: exerciseNotesInput.value.trim(),
         day: dayName,
         createdAt: Date.now()
       };
