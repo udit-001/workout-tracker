@@ -87,33 +87,8 @@
                 <h2 class="text-xl font-semibold text-gray-800">Getting Started</h2>
               </div>
               
-              <div class="divide-y divide-gray-100">
-                <div class="p-6">
-                  <div class="flex items-start">
-                    <div class="flex-shrink-0 w-8 h-8 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-medium mr-4">1</div>
-                    <div class="flex-1">
-                      <p class="text-gray-700">Create workout days in <a href="manage-days.html" class="text-blue-600 font-medium">Manage Days</a></p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="p-6">
-                  <div class="flex items-start">
-                    <div class="flex-shrink-0 w-8 h-8 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-medium mr-4">2</div>
-                    <div class="flex-1">
-                      <p class="text-gray-700">Add exercises in <a href="add-exercise.html" class="text-blue-600 font-medium">Add Exercise</a></p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="p-6">
-                  <div class="flex items-start">
-                    <div class="flex-shrink-0 w-8 h-8 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-medium mr-4">3</div>
-                    <div class="flex-1">
-                      <p class="text-gray-700">Start your workout from <a href="workouts.html" class="text-blue-600 font-medium">My Workouts</a></p>
-                    </div>
-                  </div>
-                </div>
+              <div id="gettingStartedContent" class="divide-y divide-gray-100">
+                <!-- Content will be dynamically updated by JavaScript -->
               </div>
             </div>
           </div>
@@ -143,6 +118,93 @@
           }
         });
       });
+
+      // Update Getting Started content based on user progress
+      function updateGettingStartedContent() {
+        const workoutDays = JSON.parse(localStorage.getItem('workoutDays')) || [];
+        const gettingStartedContent = document.getElementById('gettingStartedContent');
+        
+        const hasWorkoutDays = workoutDays.length > 0;
+        const hasExercises = workoutDays.some(day => day.exercises.length > 0);
+
+        if (!hasWorkoutDays) {
+          gettingStartedContent.innerHTML = `
+            <div class="p-6">
+              <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-medium mr-4">1</div>
+                <div class="flex-1">
+                  <p class="text-gray-700">Create workout days in <a href="manage-days.html" class="text-blue-600 font-medium">Manage Days</a></p>
+                </div>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-medium mr-4">2</div>
+                <div class="flex-1">
+                  <p class="text-gray-700">Add exercises in <a href="add-exercise.html" class="text-blue-600 font-medium">Add Exercise</a></p>
+                </div>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-medium mr-4">3</div>
+                <div class="flex-1">
+                  <p class="text-gray-700">Start your workout from <a href="workouts.html" class="text-blue-600 font-medium">My Workouts</a></p>
+                </div>
+              </div>
+            </div>
+          `;
+        } else if (!hasExercises) {
+          gettingStartedContent.innerHTML = `
+            <div class="p-6">
+              <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-green-50 text-green-600 rounded-full flex items-center justify-center font-medium mr-4">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-gray-700">Great! You've created your workout days. Now add some exercises in <a href="add-exercise.html" class="text-blue-600 font-medium">Add Exercise</a></p>
+                </div>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-medium mr-4">2</div>
+                <div class="flex-1">
+                  <p class="text-gray-700">Start your workout from <a href="workouts.html" class="text-blue-600 font-medium">My Workouts</a></p>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          gettingStartedContent.innerHTML = `
+            <div class="p-6">
+              <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-green-50 text-green-600 rounded-full flex items-center justify-center font-medium mr-4">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-gray-700">Perfect! You've set up your workout routine. Ready to start your fitness journey?</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-medium mr-4">1</div>
+                <div class="flex-1">
+                  <p class="text-gray-700">Head to <a href="workouts.html" class="text-blue-600 font-medium">My Workouts</a> to begin!</p>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      // Update content when page loads
+      document.addEventListener('DOMContentLoaded', updateGettingStartedContent);
     </script>
     <script type="module" src="js/landing.js"></script>
     <script type="module" src="js/pwa-install.bundle.676d3e3059f4.js"></script>
