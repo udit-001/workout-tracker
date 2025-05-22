@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Workout - Lift</title>
+    <title>Manage Workout Days - Lift</title>
   </head>
   <body class="bg-gray-50">
     <div class="flex h-screen">
@@ -14,7 +14,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <h1 class="text-lg font-semibold text-gray-700 absolute left-1/2 transform -translate-x-1/2">Add Workout</h1>
+        <h1 class="text-lg font-semibold text-gray-700 absolute left-1/2 transform -translate-x-1/2">Manage Days</h1>
         <div class="w-10"></div> <!-- Spacer to balance the menu button -->
       </nav>
 
@@ -34,7 +34,7 @@
               </a>
             </li>
             <li>
-              <a href="/add-workout" class="flex items-center text-blue-600 bg-blue-50 p-2 rounded transition-colors">
+              <a href="/add-workout" class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
@@ -50,7 +50,7 @@
               </a>
             </li>
             <li>
-              <a href="/manage-days.html" class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
+              <a href="/manage-days.html" class="flex items-center text-blue-600 bg-blue-50 p-2 rounded transition-colors">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
@@ -67,73 +67,23 @@
       <!-- Main Content -->
       <main class="flex-1 overflow-auto md:ml-64 pt-16 md:pt-0">
         <div class="container mx-auto px-2 sm:px-4 py-6 md:p-8">
-          <div class="max-w-3xl mx-auto">
-            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100">
-              <!-- Select workout day -->
-              <div class="mb-6">
-                <label class="block text-gray-700 font-bold mb-2">Workout Day</label>
-                <select id="daySelect" class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200">
-                  <option value="">Select a day</option>
-                </select>
-              </div>
-
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-gray-700 font-bold mb-2">Exercise Name</label>
-                  <input type="text" id="exerciseName" placeholder="Enter exercise name" 
-                    class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
+          <div class="max-w-2xl mx-auto">
+            <!-- Add new workout day -->
+            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100 mb-8">
+              <div class="flex flex-col sm:flex-row sm:items-end gap-2">
+                <div class="flex-1">
+                  <label class="block text-gray-700 font-bold mb-2">Add New Workout Day</label>
+                  <input type="text" id="newDayInput" placeholder="e.g., Monday, Push, Cardio" class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
                 </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-gray-700 font-bold mb-2">Reps</label>
-                    <input type="number" id="exerciseReps" placeholder="Number of reps" 
-                      class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
-                  </div>
-                  <div>
-                    <label class="block text-gray-700 font-bold mb-2">Sets</label>
-                    <input type="number" id="exerciseSets" placeholder="Number of sets" 
-                      class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
-                  </div>
-                </div>
-
-                <div>
-                  <label class="block text-gray-400 font-medium mb-2">Video Link</label>
-                  <input type="text" id="exerciseVideo" placeholder="YouTube video link" 
-                    class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
-                </div>
-
-                <div>
-                  <label class="block text-gray-400 font-medium mb-2">Notes</label>
-                  <textarea id="exerciseNotes" placeholder="Add any notes about the exercise" 
-                    class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200 h-24"></textarea>
-                </div>
-
-                <div id="videoPreviewContainer" class="aspect-w-16 aspect-h-9">
-                  <div id="videoPreviewPlaceholder" class="w-full h-64 bg-gray-50 border border-gray-100 rounded flex items-center justify-center text-gray-400">
-                    Video preview will show up here
-                  </div>
-                  <iframe id="videoPreview" class="w-full h-64 hidden" frameborder="0" allowfullscreen></iframe>
-                </div>
-
-                <div id="errorMessage" class="hidden text-red-500 text-sm mb-2"></div>
-
-                <button id="addExercise" class="w-full bg-blue-100 text-blue-600 p-3 rounded-lg hover:bg-blue-200 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">
-                  Add Exercise
-                </button>
+                <button id="addDayButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">Add Day</button>
               </div>
             </div>
 
-            <!-- Added Exercises List -->
-            <div id="workoutDays" class="mt-8 space-y-4"></div>
+            <div id="daysList" class="space-y-4"></div>
+            <div id="emptyState" class="text-gray-400 text-center mt-12 hidden">No workout days yet. Add a new workout day above!</div>
           </div>
         </div>
       </main>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="hidden bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300">
-      Exercise added successfully!
     </div>
 
     <script>
@@ -159,6 +109,6 @@
         });
       });
     </script>
-    <script type="module" src="js/add-workout.js"></script>
+    <script type="module" src="js/manage-days.js"></script>
   </body>
 </html> 
