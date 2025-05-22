@@ -8,6 +8,7 @@ const completedWorkouts = JSON.parse(localStorage.getItem('completedWorkouts')) 
 const workoutView = document.getElementById('workoutView');
 const workoutComplete = document.getElementById('workoutComplete');
 const currentDay = document.getElementById('currentDay');
+const desktopCurrentDay = document.getElementById('desktopCurrentDay');
 const currentExercise = document.getElementById('currentExercise');
 const prevExerciseButton = document.getElementById('prevExercise');
 const nextExerciseButton = document.getElementById('nextExercise');
@@ -48,6 +49,7 @@ function updateWorkoutView() {
   const exercise = day.exercises[currentExerciseIndex];
   
   currentDay.textContent = day.name;
+  desktopCurrentDay.textContent = day.name;
   
   // Format reps display
   let repsDisplay = '';
@@ -162,6 +164,8 @@ function completeSet() {
   if (currentSet < exercise.sets) {
     currentSet++;
     // Show rest timer after completing a set
+    const timerBar = document.getElementById('timerBar');
+    timerBar.classList.remove('hidden');
     showRestTimer();
     updateWorkoutView();
   } else {
@@ -176,7 +180,7 @@ function completeSet() {
 
 // Load preferences
 function loadPreferences() {
-  const savedPreferences = localStorage.getItem('workoutPreferences');
+  const savedPreferences = localStorage.getItem('preferences');
   return savedPreferences ? JSON.parse(savedPreferences) : {
     defaultReps: 10,
     defaultSets: 3,
@@ -187,9 +191,14 @@ function loadPreferences() {
 
 // Function to show rest timer
 function showRestTimer() {
+  const timerBar = document.getElementById('timerBar');
+  const mainContent = document.querySelector('.container');
+  
   timerBar.classList.remove('hidden');
+  mainContent.classList.add('md:pt-16'); // Add top padding on desktop for the timer bar
+  
   const preferences = loadPreferences();
-  restSecondsRemaining = preferences.defaultRestDuration;
+  restSecondsRemaining = preferences.defaultRestDuration || 60; // Fallback to 60 if not set
   updateRestTimerDisplay();
 }
 
@@ -197,7 +206,12 @@ function showRestTimer() {
 function startRestTimer() {
   if (!isRestTimerRunning) {
     isRestTimerRunning = true;
-    startRestTimerButton.textContent = 'Pause Rest';
+    startRestTimerButton.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+      </svg>
+    `;
+    startRestTimerButton.title = "Pause Rest Timer";
     startRestTimerButton.classList.remove('bg-purple-500', 'hover:bg-purple-600');
     startRestTimerButton.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
     
@@ -230,7 +244,12 @@ function updateRestTimerDisplay() {
 function stopRestTimer() {
   isRestTimerRunning = false;
   clearInterval(restTimerInterval);
-  startRestTimerButton.textContent = 'Start Rest Timer';
+  startRestTimerButton.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+    </svg>
+  `;
+  startRestTimerButton.title = "Start Rest Timer";
   startRestTimerButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
   startRestTimerButton.classList.add('bg-purple-500', 'hover:bg-purple-600');
 }
@@ -238,7 +257,11 @@ function stopRestTimer() {
 // Function to skip rest
 function skipRest() {
   stopRestTimer();
+  const timerBar = document.getElementById('timerBar');
+  const mainContent = document.querySelector('.container');
+  
   timerBar.classList.add('hidden');
+  mainContent.classList.remove('md:pt-16'); // Remove top padding on desktop
 }
 
 // Add event listeners

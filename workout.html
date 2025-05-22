@@ -1,127 +1,171 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Workout Session - Lift</title>
-  </head>
-  <body class="bg-gray-50">
-    <div class="flex h-screen">
-      <!-- Navbar -->
-      <nav class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 shadow-sm z-40 flex items-center justify-between px-4">
-        <button id="menuButton" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
-          <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-        <h1 id="currentDay" class="text-lg font-semibold text-gray-700 absolute left-1/2 transform -translate-x-1/2">Workout Session</h1>
-        <div class="w-10"></div> <!-- Spacer to balance the menu button -->
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workout Session - Lift</title>
+</head>
+
+<body class="bg-gray-50">
+  <div class="flex h-screen">
+    <!-- Navbar -->
+    <nav
+      class="fixed md:hidden top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 shadow-sm z-40 flex items-center justify-between px-4">
+      <button id="menuButton" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <h1 id="currentDay" class="text-lg font-semibold text-gray-700 absolute left-1/2 transform -translate-x-1/2">
+        Workout Session</h1>
+      <div class="w-10"></div> <!-- Spacer to balance the menu button -->
+    </nav>
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+      class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-40 w-64 bg-white border-r border-gray-100 shadow-sm md:pt-0">
+      <div class="p-4 border-b border-gray-100">
+        <h1 class="text-xl font-semibold text-gray-700">Lift</h1>
+      </div>
+      <nav class="p-4">
+        <ul class="space-y-2">
+          <li>
+            <a href="index.html"
+              class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              Home
+            </a>
+          </li>
+          <li>
+            <a href="add-exercise.html"
+              class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Add Exercise
+            </a>
+          </li>
+          <li>
+            <a href="workouts.html" class="flex items-center text-blue-600 bg-blue-50 p-2 rounded transition-colors">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              My Workouts
+            </a>
+          </li>
+          <li>
+            <a href="manage-days.html"
+              class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              Manage Days
+            </a>
+          </li>
+          <li>
+            <a href="preferences.html"
+              class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Preferences
+            </a>
+          </li>
+        </ul>
       </nav>
+    </aside>
 
-      <!-- Sidebar -->
-      <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-40 w-64 bg-white border-r border-gray-100 shadow-sm md:pt-0 pt-16">
-        <div class="p-4 border-b border-gray-100">
-          <h1 class="text-xl font-semibold text-gray-700">Lift</h1>
-        </div>
-        <nav class="p-4">
-          <ul class="space-y-2">
-            <li>
-              <a href="index.html" class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-                Home
-              </a>
-            </li>
-            <li>
-              <a href="add-exercise.html" class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Add Exercise
-              </a>
-            </li>
-            <li>
-              <a href="workouts.html" class="flex items-center text-blue-600 bg-blue-50 p-2 rounded transition-colors">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-                My Workouts
-              </a>
-            </li>
-            <li>
-              <a href="manage-days.html" class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-                Manage Days
-              </a>
-            </li>
-            <li>
-              <a href="preferences.html" class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                Preferences
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+    <!-- Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-stone-400 opacity-50 z-30 hidden md:hidden"></div>
 
-      <!-- Overlay -->
-      <div id="overlay" class="fixed inset-0 bg-stone-400 opacity-50 z-30 hidden md:hidden"></div>
+    <!-- Main Content -->
+    <main class="flex-1 overflow-auto md:ml-64 pt-16 md:pt-0">
+      <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-6 md:p-8">
+        <div class="max-w-2xl mx-auto">
+          <h1 id="desktopCurrentDay" class="hidden md:block text-lg font-medium text-gray-600 mb-4">Workout Session</h1>
+          <div id="workoutView" class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100">
+            <div id="currentExercise" class="mb-6 sm:mb-8"></div>
+          </div>
 
-      <!-- Main Content -->
-      <main class="flex-1 overflow-auto md:ml-64 pt-16 md:pt-0">
-        <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-6 md:p-8">
-          <div class="max-w-2xl mx-auto">
-            <div id="workoutView" class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100">
-              <div id="currentExercise" class="mb-6 sm:mb-8"></div>
+          <!-- Navigation Buttons -->
+          <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4" id="navigation-container">
+            <button id="prevExercise"
+              class="w-full sm:w-auto bg-gray-100 text-gray-600 px-4 py-2 rounded hover:bg-gray-200 transition-colors">Previous</button>
+            <button id="completeSet"
+              class="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+              Complete Set
+            </button>
+            <button id="nextExercise"
+              class="w-full sm:w-auto bg-blue-100 text-blue-600 px-4 py-2 rounded hover:bg-blue-200 transition-colors">Next</button>
+          </div>
 
-              <div class="flex flex-col sm:flex-row justify-between items-center gap-3" id="navigation-container">
-                <button id="prevExercise" class="w-full sm:w-auto bg-gray-100 text-gray-600 px-4 py-2 rounded hover:bg-gray-200 transition-colors">Previous</button>
-                <button id="completeSet" class="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-                  Complete Set
-                </button>
-                <button id="nextExercise" class="w-full sm:w-auto bg-blue-100 text-blue-600 px-4 py-2 rounded hover:bg-blue-200 transition-colors">Next</button>
-              </div>
-            </div>
-
-            <div id="workoutComplete" class="hidden bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100 text-center">
-              <h2 class="text-xl font-semibold text-gray-700 mb-4">Workout Complete!</h2>
-              <p class="text-gray-600 mb-6">Great job! Your workout has been saved.</p>
-              <a href="workouts.html" class="inline-block bg-blue-100 text-blue-600 px-6 py-2 rounded hover:bg-blue-200 transition-colors">View My Workouts</a>
-            </div>
+          <div id="workoutComplete"
+            class="hidden bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100 text-center mt-4">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Workout Complete!</h2>
+            <p class="text-gray-600 mb-6">Great job! Your workout has been saved.</p>
+            <a href="workouts.html"
+              class="inline-block bg-blue-100 text-blue-600 px-6 py-2 rounded hover:bg-blue-200 transition-colors">View
+              My Workouts</a>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
 
-    <script>
-      // Mobile menu functionality
-      const menuButton = document.getElementById('menuButton');
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('overlay');
+      <!-- Fixed Timer Bar -->
+      <div id="timerBar" class="fixed bottom-0 left-0 right-0 md:left-64 bg-white border-t border-gray-100 shadow-sm z-30">
+        <div class="container mx-auto px-4 sm:px-6 py-2 sm:py-3">
+          <div class="max-w-2xl mx-auto flex flex-row justify-between items-center gap-2 sm:gap-4">
+            <button id="startRestTimer" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-600 transition-colors" title="Start Rest Timer">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+              </svg>
+            </button>
+            <div class="flex flex-col items-center">
+              <span class="text-xs text-gray-500 mb-1">Rest</span>
+              <div id="restTimerDisplay" class="text-xl sm:text-2xl font-bold text-purple-600">00:00</div>
+            </div>
+            <button id="skipRest" class="bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 transition-colors" title="Skip Rest">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
 
-      function toggleMenu() {
-        sidebar.classList.toggle('-translate-x-full');
-        overlay.classList.toggle('hidden');
-      }
+  <script>
+    // Mobile menu functionality
+    const menuButton = document.getElementById('menuButton');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
 
-      menuButton.addEventListener('click', toggleMenu);
-      overlay.addEventListener('click', toggleMenu);
+    function toggleMenu() {
+      sidebar.classList.toggle('-translate-x-full');
+      overlay.classList.toggle('hidden');
+    }
 
-      // Close menu when clicking a link on mobile
-      document.querySelectorAll('#sidebar a').forEach(link => {
-        link.addEventListener('click', () => {
-          if (window.innerWidth < 768) { // md breakpoint
-            toggleMenu();
-          }
-        });
+    menuButton.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
+
+    // Close menu when clicking a link on mobile
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth < 768) { // md breakpoint
+          toggleMenu();
+        }
       });
-    </script>
-    <script type="module" src="js/workout.js"></script>
-  </body>
-</html> 
+    });
+  </script>
+  <script type="module" src="js/workout.js"></script>
+</body>
+
+</html>
