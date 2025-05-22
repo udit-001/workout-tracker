@@ -9,6 +9,13 @@ const defaultSetsInput = document.getElementById('defaultSets');
 const defaultRestDurationInput = document.getElementById('defaultRestDuration');
 const restTimerSoundInput = document.getElementById('restTimerSound');
 
+// Error message elements
+const defaultRepsError = document.getElementById('defaultRepsError');
+const defaultMinRepsError = document.getElementById('defaultMinRepsError');
+const defaultMaxRepsError = document.getElementById('defaultMaxRepsError');
+const defaultSetsError = document.getElementById('defaultSetsError');
+const defaultRestDurationError = document.getElementById('defaultRestDurationError');
+
 // Default preferences
 const defaultPreferences = {
   defaultReps: 10,
@@ -18,6 +25,58 @@ const defaultPreferences = {
   defaultRestDuration: 60,
   restTimerSound: true
 };
+
+// Validation functions
+function validateReps(value) {
+  if (!value) return '';
+  const num = parseInt(value);
+  if (isNaN(num)) return 'Please enter a valid number';
+  if (num < 1) return 'Reps must be at least 1';
+  if (num > 100) return 'Reps cannot exceed 100';
+  return '';
+}
+
+function validateSets(value) {
+  if (!value) return '';
+  const num = parseInt(value);
+  if (isNaN(num)) return 'Please enter a valid number';
+  if (num < 1) return 'Sets must be at least 1';
+  if (num > 20) return 'Sets cannot exceed 20';
+  return '';
+}
+
+function validateRestDuration(value) {
+  if (!value) return '';
+  const num = parseInt(value);
+  if (isNaN(num)) return 'Please enter a valid number';
+  if (num < 0) return 'Duration cannot be negative';
+  if (num > 300) return 'Duration cannot exceed 300 seconds';
+  return '';
+}
+
+function validateRepRange(min, max) {
+  if (!min && !max) return { min: '', max: '' };
+  
+  const minNum = parseInt(min);
+  const maxNum = parseInt(max);
+  
+  const errors = {
+    min: validateReps(min),
+    max: validateReps(max)
+  };
+
+  if (!errors.min && !errors.max && minNum > maxNum) {
+    errors.min = 'Minimum reps cannot be greater than maximum reps';
+  }
+
+  return errors;
+}
+
+// Show/hide error message
+function showError(element, message) {
+  element.textContent = message;
+  element.style.visibility = message ? 'visible' : 'hidden';
+}
 
 // Load preferences from localStorage
 function loadPreferences() {
@@ -45,6 +104,24 @@ function initializeForm() {
 preferencesForm.addEventListener('submit', (e) => {
   e.preventDefault();
   
+  // Validate all fields
+  const repsError = validateReps(defaultRepsInput.value);
+  const setsError = validateSets(defaultSetsInput.value);
+  const restDurationError = validateRestDuration(defaultRestDurationInput.value);
+  const repRangeErrors = validateRepRange(defaultMinRepsInput.value, defaultMaxRepsInput.value);
+
+  // Show all errors
+  showError(defaultRepsError, repsError);
+  showError(defaultSetsError, setsError);
+  showError(defaultRestDurationError, restDurationError);
+  showError(defaultMinRepsError, repRangeErrors.min);
+  showError(defaultMaxRepsError, repRangeErrors.max);
+
+  // If any errors exist, don't submit
+  if (repsError || setsError || restDurationError || repRangeErrors.min || repRangeErrors.max) {
+    return;
+  }
+
   const preferences = {
     defaultReps: defaultRepsInput.value ? parseInt(defaultRepsInput.value) : null,
     defaultMinReps: defaultMinRepsInput.value ? parseInt(defaultMinRepsInput.value) : null,
@@ -53,14 +130,6 @@ preferencesForm.addEventListener('submit', (e) => {
     defaultRestDuration: parseInt(defaultRestDurationInput.value) || defaultPreferences.defaultRestDuration,
     restTimerSound: restTimerSoundInput.checked
   };
-
-  // Validate rep range if provided
-  if (preferences.defaultMinReps && preferences.defaultMaxReps) {
-    if (preferences.defaultMinReps > preferences.defaultMaxReps) {
-      alert('Minimum reps cannot be greater than maximum reps');
-      return;
-    }
-  }
 
   // Clear other reps fields if one is filled
   if (preferences.defaultReps) {
@@ -76,22 +145,41 @@ preferencesForm.addEventListener('submit', (e) => {
 
 // Add input event listeners for validation
 defaultRepsInput.addEventListener('input', () => {
+  showError(defaultRepsError, validateReps(defaultRepsInput.value));
   if (defaultRepsInput.value) {
     defaultMinRepsInput.value = '';
     defaultMaxRepsInput.value = '';
+    showError(defaultMinRepsError, '');
+    showError(defaultMaxRepsError, '');
   }
 });
 
 defaultMinRepsInput.addEventListener('input', () => {
+  const errors = validateRepRange(defaultMinRepsInput.value, defaultMaxRepsInput.value);
+  showError(defaultMinRepsError, errors.min);
+  showError(defaultMaxRepsError, errors.max);
   if (defaultMinRepsInput.value) {
     defaultRepsInput.value = '';
+    showError(defaultRepsError, '');
   }
 });
 
 defaultMaxRepsInput.addEventListener('input', () => {
+  const errors = validateRepRange(defaultMinRepsInput.value, defaultMaxRepsInput.value);
+  showError(defaultMinRepsError, errors.min);
+  showError(defaultMaxRepsError, errors.max);
   if (defaultMaxRepsInput.value) {
     defaultRepsInput.value = '';
+    showError(defaultRepsError, '');
   }
+});
+
+defaultSetsInput.addEventListener('input', () => {
+  showError(defaultSetsError, validateSets(defaultSetsInput.value));
+});
+
+defaultRestDurationInput.addEventListener('input', () => {
+  showError(defaultRestDurationError, validateRestDuration(defaultRestDurationInput.value));
 });
 
 // Function to show toast notification
