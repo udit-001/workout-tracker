@@ -516,9 +516,31 @@ if (workoutDays.length === 0) {
       updateDaySelect();
       validateForm();
       hideError();
-      showToast();
 
-      // Show success state
+      // Show success message with next steps
+      const successMessage = document.createElement('div');
+      successMessage.className = 'mt-4 p-4 bg-green-50 border border-green-100 rounded-lg';
+      successMessage.innerHTML = `
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-green-700 font-medium">Exercise added successfully!</p>
+            <p class="text-green-600 mt-1">Ready to start your workout? Head to <a href="/workouts" class="text-green-700 underline">My Workouts</a> to begin.</p>
+          </div>
+        </div>
+      `;
+      formContainer.appendChild(successMessage);
+
+      // Remove success message after 5 seconds
+      setTimeout(() => {
+        successMessage.remove();
+      }, 5000);
+
+      // Show success state on button
       const addButton = document.getElementById('addExercise');
       const originalText = addButton.textContent;
       
