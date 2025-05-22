@@ -11,16 +11,19 @@ const currentDay = document.getElementById('currentDay');
 const currentExercise = document.getElementById('currentExercise');
 const prevExerciseButton = document.getElementById('prevExercise');
 const nextExerciseButton = document.getElementById('nextExercise');
-const timerDisplay = document.getElementById('timer');
+const timerBar = document.getElementById('timerBar');
+const restTimerDisplay = document.getElementById('restTimerDisplay');
+const startRestTimerButton = document.getElementById('startRestTimer');
+const skipRestButton = document.getElementById('skipRest');
 const endWorkoutButton = document.getElementById('endWorkout');
-const startTimerButton = document.getElementById('startTimer');
 
 // Workout State
 let currentDayIndex = 0;
 let currentExerciseIndex = 0;
-let timerInterval = null;
-let secondsElapsed = 0;
-let isTimerRunning = false;
+let currentSet = 1;
+let restTimerInterval = null;
+let restSecondsRemaining = 0;
+let isRestTimerRunning = false;
 
 // Get day index from URL
 const urlParams = new URLSearchParams(window.location.search);
@@ -37,8 +40,6 @@ if (dayIndex >= 0 && dayIndex < workoutDays.length && workoutDays[dayIndex].exer
 // Start the workout
 function startWorkout() {
   updateWorkoutView();
-  // Don't start timer automatically
-  updateTimerDisplay();
 }
 
 // Update the workout view with current exercise
@@ -68,7 +69,7 @@ function updateWorkoutView() {
         <svg class="w-4 h-4 text-green-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-        <span class="text-green-600 font-medium">${exercise.sets} sets</span>
+        <span class="text-green-600 font-medium">Set ${currentSet} of ${exercise.sets}</span>
       </div>
     </div>
     ${exercise.video ? 
@@ -77,6 +78,45 @@ function updateWorkoutView() {
       </div>` : ''}
     ${exercise.notes ? `<p class="text-gray-500 mb-4">Notes: ${exercise.notes}</p>` : ''}
   `;
+  
+  // Update navigation container with complete set button
+  const navigationContainer = document.querySelector('#navigation-container');
+  navigationContainer.innerHTML = `
+    <button id="prevExercise" class="bg-gray-100 text-gray-600 px-4 py-2 rounded hover:bg-gray-200 transition-colors">Previous</button>
+    <button id="completeSet" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+      Complete Set
+    </button>
+    <button id="nextExercise" class="bg-blue-100 text-blue-600 px-4 py-2 rounded hover:bg-blue-200 transition-colors">Next</button>
+  `;
+  
+  // Add event listeners
+  const completeSetButton = document.getElementById('completeSet');
+  const prevExerciseButton = document.getElementById('prevExercise');
+  const nextExerciseButton = document.getElementById('nextExercise');
+  
+  if (completeSetButton) {
+    completeSetButton.addEventListener('click', completeSet);
+  }
+  
+  if (prevExerciseButton) {
+    prevExerciseButton.addEventListener('click', () => {
+      if (currentExerciseIndex > 0) {
+        currentExerciseIndex--;
+        currentSet = 1;
+        updateWorkoutView();
+      }
+    });
+  }
+  
+  if (nextExerciseButton) {
+    nextExerciseButton.addEventListener('click', () => {
+      if (currentExerciseIndex < workoutDays[currentDayIndex].exercises.length - 1) {
+        currentExerciseIndex++;
+        currentSet = 1;
+        updateWorkoutView();
+      }
+    });
+  }
   
   // Update button visibility based on position
   if (currentExerciseIndex === 0) {
@@ -91,7 +131,6 @@ function updateWorkoutView() {
     nextExerciseButton.classList.remove('invisible');
   }
 
-  const navigationContainer = document.querySelector('#navigation-container');
   if (prevExerciseButton.classList.contains('invisible') && nextExerciseButton.classList.contains('invisible')) {
     navigationContainer.classList.add('hidden');
   } else {
@@ -105,60 +144,79 @@ function getYouTubeId(url) {
   return (match && match[2].length === 11) ? match[2] : null;
 }
 
-function startTimer() {
-  if (!isTimerRunning) {
-    isTimerRunning = true;
-    startTimerButton.textContent = 'Pause';
-    startTimerButton.classList.remove('bg-green-100', 'text-green-600', 'hover:bg-green-200');
-    startTimerButton.classList.add('bg-yellow-100', 'text-yellow-600', 'hover:bg-yellow-200');
-    timerInterval = setInterval(() => {
-      secondsElapsed++;
-      updateTimerDisplay();
+// Function to complete a set
+function completeSet() {
+  const exercise = workoutDays[currentDayIndex].exercises[currentExerciseIndex];
+  if (currentSet < exercise.sets) {
+    currentSet++;
+    // Show rest timer after completing a set
+    showRestTimer();
+    updateWorkoutView();
+  } else {
+    // Move to next exercise if all sets are complete
+    if (currentExerciseIndex < workoutDays[currentDayIndex].exercises.length - 1) {
+      currentExerciseIndex++;
+      currentSet = 1;
+      updateWorkoutView();
+    }
+  }
+}
+
+// Function to show rest timer
+function showRestTimer() {
+  timerBar.classList.remove('hidden');
+  restSecondsRemaining = 60; // Default 60 seconds rest
+  updateRestTimerDisplay();
+}
+
+// Function to start rest timer
+function startRestTimer() {
+  if (!isRestTimerRunning) {
+    isRestTimerRunning = true;
+    startRestTimerButton.textContent = 'Pause Rest';
+    startRestTimerButton.classList.remove('bg-purple-500', 'hover:bg-purple-600');
+    startRestTimerButton.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+    
+    restTimerInterval = setInterval(() => {
+      if (restSecondsRemaining > 0) {
+        restSecondsRemaining--;
+        updateRestTimerDisplay();
+      } else {
+        stopRestTimer();
+        // Play a bell sound when rest is complete
+        new Audio('/sounds/bell.wav').play();
+      }
     }, 1000);
   } else {
-    pauseTimer();
+    stopRestTimer();
   }
 }
 
-function pauseTimer() {
-  isTimerRunning = false;
-  startTimerButton.textContent = 'Resume';
-  startTimerButton.classList.remove('bg-yellow-100', 'text-yellow-600', 'hover:bg-yellow-200');
-  startTimerButton.classList.add('bg-green-100', 'text-green-600', 'hover:bg-green-200');
-  clearInterval(timerInterval);
+// Function to update rest timer display
+function updateRestTimerDisplay() {
+  const minutes = Math.floor(restSecondsRemaining / 60);
+  const seconds = restSecondsRemaining % 60;
+  restTimerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
-function updateTimerDisplay() {
-  const minutes = Math.floor(secondsElapsed / 60);
-  const seconds = secondsElapsed % 60;
-  timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+// Function to stop rest timer
+function stopRestTimer() {
+  isRestTimerRunning = false;
+  clearInterval(restTimerInterval);
+  startRestTimerButton.textContent = 'Start Rest Timer';
+  startRestTimerButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+  startRestTimerButton.classList.add('bg-purple-500', 'hover:bg-purple-600');
 }
 
-function stopTimer() {
-  isTimerRunning = false;
-  clearInterval(timerInterval);
-  startTimerButton.textContent = 'Start';
-  startTimerButton.classList.remove('bg-yellow-100', 'text-yellow-600', 'hover:bg-yellow-200');
-  startTimerButton.classList.add('bg-green-100', 'text-green-600', 'hover:bg-green-200');
+// Function to skip rest
+function skipRest() {
+  stopRestTimer();
+  timerBar.classList.add('hidden');
 }
 
-// Add click handler for start timer button
-startTimerButton.addEventListener('click', startTimer);
-
-// Navigation between exercises
-prevExerciseButton.addEventListener('click', () => {
-  if (currentExerciseIndex > 0) {
-    currentExerciseIndex--;
-    updateWorkoutView();
-  }
-});
-
-nextExerciseButton.addEventListener('click', () => {
-  if (currentExerciseIndex < workoutDays[currentDayIndex].exercises.length - 1) {
-    currentExerciseIndex++;
-    updateWorkoutView();
-  }
-});
+// Add event listeners
+startRestTimerButton.addEventListener('click', startRestTimer);
+skipRestButton.addEventListener('click', skipRest);
 
 // End workout
 endWorkoutButton.addEventListener('click', () => {
@@ -169,12 +227,10 @@ endWorkoutButton.addEventListener('click', () => {
       ...exercise,
       completedAt: Date.now()
     })),
-    duration: secondsElapsed,
     completedAt: Date.now()
   };
   completedWorkouts.push(completedWorkout);
   localStorage.setItem('completedWorkouts', JSON.stringify(completedWorkouts));
-  stopTimer();
   workoutView.classList.add('hidden');
   workoutComplete.classList.remove('hidden');
 });
