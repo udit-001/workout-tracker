@@ -84,6 +84,7 @@
                 <select id="daySelect" class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200">
                   <option value="">Select a day</option>
                 </select>
+                <div id="dayError" class="hidden text-red-500 text-sm mt-1"></div>
               </div>
 
               <div class="space-y-4">
@@ -91,12 +92,14 @@
                   <label class="block text-gray-700 font-bold mb-2">Exercise Name</label>
                   <input type="text" id="exerciseName" placeholder="Enter exercise name" 
                     class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
+                  <div id="nameError" class="hidden text-red-500 text-sm mt-1"></div>
                 </div>
 
                 <div>
                   <label class="block text-gray-700 font-bold mb-2">Sets</label>
-                  <input type="number" id="exerciseSets" placeholder="Number of sets" 
+                  <input type="number" id="exerciseSets" placeholder="Number of sets" min="0"
                     class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
+                  <div id="setsError" class="hidden text-red-500 text-sm mt-1"></div>
                 </div>
 
                 <div>
@@ -108,20 +111,22 @@
                     </label>
                   </div>
                   <div id="singleRepInput" class="space-y-2">
-                    <input type="number" id="exerciseReps" placeholder="Number of reps" 
+                    <input type="number" id="exerciseReps" placeholder="Number of reps" min="0"
                       class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
+                    <div id="repsError" class="hidden text-red-500 text-sm mt-1"></div>
                   </div>
                   <div id="repRangeInputs" class="hidden space-y-2">
                     <div class="grid grid-cols-2 gap-2">
                       <div>
-                        <input type="number" id="minReps" placeholder="Min reps" 
+                        <input type="number" id="minReps" placeholder="Min reps" min="0"
                           class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
                       </div>
                       <div>
-                        <input type="number" id="maxReps" placeholder="Max reps" 
+                        <input type="number" id="maxReps" placeholder="Max reps" min="0"
                           class="w-full p-2 border border-gray-200 rounded focus:border-blue-200 focus:ring-1 focus:ring-blue-200" />
                       </div>
                     </div>
+                    <div id="repRangeError" class="hidden text-red-500 text-sm mt-1"></div>
                   </div>
                 </div>
 

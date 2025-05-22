@@ -57,23 +57,77 @@ if (workoutDays.length === 0) {
     validateForm();
   });
 
+  // Function to validate number input
+  function validateNumberInput(input, errorId, fieldName) {
+    const value = input.value;
+    if (value === '') {
+      showFieldError(errorId, `Please enter ${fieldName}`);
+      return false;
+    }
+    if (parseInt(value) < 0) {
+      input.value = Math.abs(parseInt(value));
+      showFieldError(errorId, `Negative values are not allowed. Converted to positive value.`);
+      return false;
+    }
+    hideFieldError(errorId);
+    return true;
+  }
+
+  // Function to hide error message for a specific field
+  function hideFieldError(fieldId) {
+    const errorElement = document.getElementById(fieldId);
+    errorElement.classList.add('hidden');
+    errorElement.textContent = '';
+  }
+
   // Function to check if all required fields are filled
-  function validateForm() {
+  function validateForm(showErrors = false) {
     const isDaySelected = daySelect.value !== '';
     const isNameFilled = exerciseNameInput.value.trim() !== '';
-    const isSetsFilled = exerciseSetsInput.value !== '';
+    let isSetsValid = true;
+    let isRepsValid = true;
     
-    let isRepsValid = true; // Default to true since reps are now optional
-    if (useRepRange.checked) {
-      const minReps = minRepsInput.value;
-      const maxReps = maxRepsInput.value;
-      // Only validate if either min or max is filled
-      if (minReps || maxReps) {
-        isRepsValid = minReps && maxReps && parseInt(minReps) <= parseInt(maxReps);
+    // Reset all error messages
+    hideAllErrors();
+    
+    // Only show errors if showErrors is true
+    if (showErrors) {
+      // Validate day selection
+      if (!isDaySelected) {
+        showFieldError('dayError', 'Please select a workout day');
       }
-    } else if (exerciseRepsInput.value) {
-      // Only validate if reps value is provided
-      isRepsValid = exerciseRepsInput.value !== '';
+      
+      // Validate exercise name
+      if (!isNameFilled) {
+        showFieldError('nameError', 'Please enter an exercise name');
+      }
+      
+      // Validate sets
+      isSetsValid = validateNumberInput(exerciseSetsInput, 'setsError', 'number of sets');
+      
+      // Validate reps
+      if (useRepRange.checked) {
+        const minReps = minRepsInput.value;
+        const maxReps = maxRepsInput.value;
+        // Only validate if either min or max is filled
+        if (minReps || maxReps) {
+          const isMinValid = validateNumberInput(minRepsInput, 'repRangeError', 'minimum reps');
+          const isMaxValid = validateNumberInput(maxRepsInput, 'repRangeError', 'maximum reps');
+          
+          if (isMinValid && isMaxValid && parseInt(minReps) > parseInt(maxReps)) {
+            showFieldError('repRangeError', 'Minimum reps cannot be greater than maximum reps');
+            isRepsValid = false;
+          } else if (!isMinValid || !isMaxValid) {
+            isRepsValid = false;
+          }
+        }
+      } else if (exerciseRepsInput.value) {
+        // Only validate if reps value is provided
+        isRepsValid = validateNumberInput(exerciseRepsInput, 'repsError', 'number of reps');
+      }
+    } else {
+      // Even if not showing errors, we still need to validate for button state
+      isSetsValid = exerciseSetsInput.value !== '';
     }
     
     // Check if we're in edit mode
@@ -105,21 +159,41 @@ if (workoutDays.length === 0) {
     }
     
     // For new exercise mode, require all fields except reps
-    const isValid = isDaySelected && isNameFilled && isSetsFilled && isRepsValid;
+    const isValid = isDaySelected && isNameFilled && isSetsValid && isRepsValid;
+    
     addExerciseButton.disabled = !isValid;
     addExerciseButton.classList.toggle('opacity-50', !isValid);
     addExerciseButton.classList.toggle('cursor-not-allowed', !isValid);
   }
 
+  // Function to show error message for a specific field
+  function showFieldError(fieldId, message) {
+    const errorElement = document.getElementById(fieldId);
+    errorElement.textContent = message;
+    errorElement.classList.remove('hidden');
+  }
+
+  // Function to hide all error messages
+  function hideAllErrors() {
+    const errorFields = ['dayError', 'nameError', 'setsError', 'repsError', 'repRangeError'];
+    errorFields.forEach(fieldId => {
+      const errorElement = document.getElementById(fieldId);
+      errorElement.classList.add('hidden');
+      errorElement.textContent = '';
+    });
+  }
+
   // Add input event listeners for validation
-  daySelect.addEventListener('change', validateForm);
-  exerciseNameInput.addEventListener('input', validateForm);
-  exerciseRepsInput.addEventListener('input', validateForm);
-  minRepsInput.addEventListener('input', validateForm);
-  maxRepsInput.addEventListener('input', validateForm);
-  exerciseSetsInput.addEventListener('input', validateForm);
-  exerciseVideoInput.addEventListener('input', validateForm);
-  exerciseNotesInput.addEventListener('input', validateForm);
+  function addValidationListeners() {
+    daySelect.addEventListener('change', () => validateForm(true));
+    exerciseNameInput.addEventListener('input', () => validateForm(true));
+    exerciseSetsInput.addEventListener('change', () => validateForm(true));
+    exerciseRepsInput.addEventListener('change', () => validateForm(true));
+    minRepsInput.addEventListener('change', () => validateForm(true));
+    maxRepsInput.addEventListener('change', () => validateForm(true));
+    exerciseVideoInput.addEventListener('input', () => validateForm(true));
+    exerciseNotesInput.addEventListener('input', () => validateForm(true));
+  }
 
   // Add event listener for video preview
   exerciseVideoInput.addEventListener('input', () => {
@@ -139,9 +213,6 @@ if (workoutDays.length === 0) {
     }
   });
 
-  // Initialize button state
-  validateForm();
-
   // Load workout days from localStorage on page load
   window.addEventListener('DOMContentLoaded', () => {
     // Check for day parameter in URL
@@ -149,12 +220,29 @@ if (workoutDays.length === 0) {
     const selectedDay = urlParams.get('day');
     
     updateDaySelect(selectedDay);
-    validateForm();
     
     // Check for edit parameters in URL
     const exerciseHash = urlParams.get('hash');
     const dayIndex = parseInt(urlParams.get('day'));
     const exerciseIndex = parseInt(urlParams.get('exercise'));
+    
+    const isEditMode = !!(exerciseHash && dayIndex >= 0 && exerciseIndex >= 0);
+    
+    // Update navbar title based on mode
+    const navbarTitle = document.querySelector('nav h1');
+    if (navbarTitle) {
+      navbarTitle.textContent = isEditMode ? 'Edit Exercise' : 'Add Exercise';
+    }
+    
+    // Always add validation listeners
+    addValidationListeners();
+    
+    if (isEditMode) {
+      // In edit mode, we'll handle validation differently
+      addExerciseButton.textContent = 'Update Exercise';
+    } else {
+      validateForm(false); // Don't show errors on initial load
+    }
     
     if (exerciseHash && dayIndex >= 0 && exerciseIndex >= 0) {
       const exercise = workoutDays[dayIndex].exercises[exerciseIndex];
