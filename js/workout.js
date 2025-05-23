@@ -186,6 +186,14 @@ nextExerciseTimerButton.addEventListener('click', () => {
 function updateTimerBarNavigation() {
   prevExerciseTimerButton.style.visibility = currentExerciseIndex === 0 ? 'hidden' : 'visible';
   nextExerciseTimerButton.style.visibility = currentExerciseIndex === workoutDays[currentDayIndex].exercises.length - 1 ? 'hidden' : 'visible';
+
+  if (nextExerciseTimerButton.style.visibility === 'hidden') {
+    endWorkoutButton.classList.remove('hidden');
+    nextExerciseTimerButton.classList.add('hidden');
+  } else {
+    endWorkoutButton.classList.add('hidden');
+    nextExerciseTimerButton.classList.remove('hidden');
+  }
 }
 
 // Update the workout view with current exercise
@@ -247,8 +255,8 @@ function updateWorkoutView() {
       ` : ''}
       <div class="flex md:flex-col justify-center items-center">
         <button id="completeSet" class="bg-blue-500 text-white p-3 rounded-full hover:bg-blue-600 transition-colors" title="Complete Set">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
           </svg>
         </button>
       </div>
@@ -316,17 +324,7 @@ function handleEscapeKey(e) {
 
 // End workout
 endWorkoutButton.addEventListener('click', () => {
-  const completedWorkout = {
-    id: Date.now(),
-    day: workoutDays[currentDayIndex].name,
-    exercises: workoutDays[currentDayIndex].exercises.map(exercise => ({
-      ...exercise,
-      completedAt: Date.now()
-    })),
-    completedAt: Date.now()
-  };
-  completedWorkouts.push(completedWorkout);
-  localStorage.setItem('completedWorkouts', JSON.stringify(completedWorkouts));
+  timerBar.classList.add('hidden');
   workoutView.classList.add('hidden');
   workoutComplete.classList.remove('hidden');
 });
