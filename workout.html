@@ -112,18 +112,6 @@
             </div>
           </div>
 
-          <!-- Navigation Buttons -->
-          <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4" id="navigation-container">
-            <button id="prevExercise"
-              class="w-full sm:w-auto bg-gray-100 text-gray-600 px-4 py-2 rounded hover:bg-gray-200 transition-colors">Previous</button>
-            <button id="completeSet"
-              class="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-              Complete Set
-            </button>
-            <button id="nextExercise"
-              class="w-full sm:w-auto bg-blue-100 text-blue-600 px-4 py-2 rounded hover:bg-blue-200 transition-colors">Next</button>
-          </div>
-
           <div id="workoutComplete"
             class="hidden bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100 text-center mt-4">
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Workout Complete!</h2>
@@ -138,19 +126,26 @@
       <!-- Fixed Timer Bar -->
       <div id="timerBar" class="fixed bottom-0 left-0 right-0 md:left-64 bg-white border-t border-gray-100 shadow-sm z-30">
         <div class="container mx-auto px-4 sm:px-6 py-2 sm:py-3">
-          <div class="max-w-2xl mx-auto flex flex-row justify-between items-center gap-2 sm:gap-4">
-            <button id="startRestTimer" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-600 transition-colors" title="Start Rest Timer">
+          <div class="max-w-2xl mx-auto flex flex-row justify-between items-center">
+            <button id="prevExerciseTimer" class="bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 transition-colors" title="Previous Exercise">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
               </svg>
             </button>
-            <div class="flex flex-col items-center">
-              <span class="text-xs text-gray-500 mb-1">Rest</span>
-              <div id="restTimerDisplay" class="text-xl sm:text-2xl font-bold text-purple-600">00:00</div>
+            <div class="flex items-center gap-2">
+              <button id="startRestTimer" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-600 transition-colors" title="Start Rest Timer">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                </svg>
+              </button>
+              <div class="flex flex-col items-center">
+                <span class="text-xs text-gray-500 mb-1">Rest</span>
+                <div id="restTimerDisplay" class="text-xl sm:text-2xl font-bold text-purple-600">00:00</div>
+              </div>
             </div>
-            <button id="skipRest" class="bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 transition-colors" title="Skip Rest">
+            <button id="nextExerciseTimer" class="bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 transition-colors" title="Next Exercise">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
               </svg>
             </button>
           </div>
