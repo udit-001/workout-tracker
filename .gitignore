@@ -10,7 +10,13 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dev-dist
 *.local
+
+# Personal workout data (keep .gitkeep and preferences.json)
+content/days/*.json
+content/workouts/*.json
+content/bookends/*.json
 
 # Editor directories and files
 .vscode/*
