@@ -117,8 +117,6 @@ export default defineConfig({
                 index: resolve(__dirname, "index.html"),
                 workout: resolve(__dirname, "workout.html"),
                 workouts: resolve(__dirname, "workouts.html"),
-                'add-exercise': resolve(__dirname, "add-exercise.html"),
-                'manage-days': resolve(__dirname, "manage-days.html"),
 
             }
         },
