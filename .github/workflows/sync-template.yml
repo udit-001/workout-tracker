@@ -40,13 +40,18 @@ jobs:
           git checkout -b "$BRANCH"
           git merge template/main --no-edit || true
 
+          cleanup_branch() {
+            echo "PR creation failed. Cleaning up branch."
+            git push origin --delete "$BRANCH" 2>/dev/null || true
+          }
+
           if git diff --check HEAD 2>/dev/null; then
             git push origin "$BRANCH"
             gh pr create \
               --title "chore: sync updates from template" \
               --body "Automated PR to sync latest changes from the [workout-tracker template](https://github.com/udit-001/workout-tracker-app)." \
               --base main \
-              --head "$BRANCH"
+              --head "$BRANCH" || cleanup_branch
           else
             echo "Merge conflicts detected. Manual resolution needed."
             git merge --abort
@@ -55,5 +60,5 @@ jobs:
               --title "chore: sync updates from template (conflicts)" \
               --body "Automated PR to sync latest changes from the [workout-tracker template](https://github.com/udit-001/workout-tracker-app). ⚠️ This PR has merge conflicts that need manual resolution." \
               --base main \
-              --head "$BRANCH"
+              --head "$BRANCH" || cleanup_branch
           fi
