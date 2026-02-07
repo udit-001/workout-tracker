@@ -26,6 +26,7 @@ collections:
     fields:
       - { label: Name, name: name, widget: string }
       - { label: Slug, name: slug, widget: string, hint: "Short URL-friendly identifier (e.g. push, pull, leg)" }
+      - { label: Order, name: order, widget: number, value_type: int, default: 0, hint: "Sort order for days (lower shows first)" }
 
   - name: bookends
     label: Bookends

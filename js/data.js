@@ -10,11 +10,18 @@ let cachedBookends = null;
 export function loadWorkoutDays() {
   if (cachedWorkoutDays) return cachedWorkoutDays;
   const days = Object.values(dayModules).map((mod) => mod.default);
-  cachedWorkoutDays = Object.values(workoutModules).map((mod) => {
-    const workout = mod.default;
-    const day = days.find((d) => d.name === workout.name);
-    return { ...workout, slug: day?.slug || '' };
-  });
+  cachedWorkoutDays = Object.values(workoutModules)
+    .map((mod) => {
+      const workout = mod.default;
+      const day = days.find((d) => d.name === workout.name);
+      return { ...workout, slug: day?.slug || '' };
+    })
+    .sort((a, b) => {
+      const ao = Number.isFinite(a.order) ? a.order : Number.POSITIVE_INFINITY;
+      const bo = Number.isFinite(b.order) ? b.order : Number.POSITIVE_INFINITY;
+      if (ao !== bo) return ao - bo;
+      return String(a.name || '').localeCompare(String(b.name || ''));
+    });
   return cachedWorkoutDays;
 }
 
