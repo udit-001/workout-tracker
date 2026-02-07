@@ -1,0 +1,58 @@
+name: Sync from Template
+
+on:
+  schedule:
+    - cron: "0 0 * * 0" # Weekly on Sunday
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync from template
+        run: |
+          git remote add template https://github.com/udit-001/workout-tracker.git || true
+          git fetch template
+
+          if git diff --quiet HEAD...template/main; then
+            echo "Already up to date"
+            echo "HAS_CHANGES=false" >> "$GITHUB_ENV"
+          else
+            echo "HAS_CHANGES=true" >> "$GITHUB_ENV"
+          fi
+
+      - name: Create PR
+        if: env.HAS_CHANGES == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="sync-template-$(date +%Y%m%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git merge template/main --no-edit || true
+
+          if git diff --check HEAD 2>/dev/null; then
+            git push origin "$BRANCH"
+            gh pr create \
+              --title "chore: sync updates from template" \
+              --body "Automated PR to sync latest changes from the [workout-tracker template](https://github.com/udit-001/workout-tracker)." \
+              --base main \
+              --head "$BRANCH"
+          else
+            echo "Merge conflicts detected. Manual resolution needed."
+            git merge --abort
+            git push origin "$BRANCH"
+            gh pr create \
+              --title "chore: sync updates from template (conflicts)" \
+              --body "Automated PR to sync latest changes from the [workout-tracker template](https://github.com/udit-001/workout-tracker). ⚠️ This PR has merge conflicts that need manual resolution." \
+              --base main \
+              --head "$BRANCH"
+          fi
