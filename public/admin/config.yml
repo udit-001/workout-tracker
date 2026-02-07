@@ -1,0 +1,118 @@
+local_backend: true
+
+logo:
+  src: /icons/pwa-192x192.png
+  show_in_header: true
+editor:
+  preview: false
+
+backend:
+  name: github
+  repo: udit-001/workout-tracker
+  base_url: https://sveltia-cms-auth.aurax.workers.dev
+
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: days
+    label: Workout Days
+    description: Named days in your training split
+    folder: content/days
+    icon: calendar_today
+    format: json
+    create: true
+    slug: "{{name}}"
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Slug, name: slug, widget: string, hint: "Short URL-friendly identifier (e.g. push, pull, leg)" }
+
+  - name: bookends
+    label: Bookends
+    description: Warmup and cooldown videos that bracket your workouts
+    folder: content/bookends
+    icon: self_improvement
+    format: json
+    create: true
+    slug: "{{name}}"
+    fields:
+      - { label: Name, name: name, widget: string }
+      - label: Type
+        name: type
+        widget: select
+        options:
+          - { label: Warmup, value: warmup }
+          - { label: Cooldown, value: cooldown }
+      - label: Videos
+        name: videos
+        widget: list
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: Video URL, name: url, widget: string }
+
+  - name: workouts
+    label: Workouts
+    description: Exercise plans for each training day
+    folder: content/workouts
+    icon: fitness_center
+    format: json
+    create: true
+    slug: "{{name}}"
+    fields:
+      - label: Day
+        name: name
+        widget: relation
+        collection: days
+        value_field: name
+        display_fields: [name]
+        search_fields: [name]
+        hint: "[Add a workout day](/admin/#/collections/days) first if none are available"
+      - label: Warmup
+        name: warmup
+        widget: relation
+        collection: bookends
+        value_field: name
+        display_fields: [name]
+        search_fields: [name]
+        required: false
+        multiple: true
+        hint: "[Add a bookend](/admin/#/collections/bookends) first if none are available"
+      - label: Cooldown
+        name: cooldown
+        widget: relation
+        collection: bookends
+        value_field: name
+        display_fields: [name]
+        search_fields: [name]
+        required: false
+        multiple: true
+        hint: "[Add a bookend](/admin/#/collections/bookends) first if none are available"
+      - label: Exercises
+        name: exercises
+        widget: list
+        collapsed: true
+        add_to_top: true
+        fields:
+          - { label: Name, name: name, widget: string }
+          - { label: Sets, name: sets, widget: number, value_type: int, min: 1, default: 3 }
+          - { label: Reps, name: reps, widget: number, required: false, value_type: int, min: 1, default: 10 }
+          - { label: Min Reps, name: minReps, widget: number, required: false, value_type: int, min: 1 }
+          - { label: Max Reps, name: maxReps, widget: number, required: false, value_type: int, min: 1 }
+          - { label: Video URL, name: video, widget: string, required: false }
+          - { label: Notes, name: notes, widget: text, required: false }
+
+  - name: settings
+    label: Settings
+    description: App defaults and preferences
+    icon: settings
+    files:
+      - name: preferences
+        label: Preferences
+        file: content/preferences.json
+        fields:
+          - { label: Reps, name: defaultReps, widget: number, value_type: int, min: 1, hint: "Single number of reps" }
+          - { label: Min Reps, name: defaultMinReps, widget: number, required: false, value_type: int, min: 1, hint: "Range of reps (use instead of single reps)" }
+          - { label: Max Reps, name: defaultMaxReps, widget: number, required: false, value_type: int, min: 1, hint: "Upper bound for rep range" }
+          - { label: Sets, name: defaultSets, widget: number, value_type: int, min: 1 }
+          - { label: Rest Duration (seconds), name: defaultRestDuration, widget: number, value_type: int, min: 0 }
+          - { label: Enable Rest Timer Sound, name: restTimerSound, widget: boolean, default: true }

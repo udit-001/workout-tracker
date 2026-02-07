@@ -10,6 +10,17 @@ export default defineConfig({
     base: '/',
     // root: 'src',
     plugins: [
+        {
+            name: 'admin-rewrite',
+            configureServer(server) {
+                server.middlewares.use((req, _res, next) => {
+                    if (req.url === '/admin' || req.url === '/admin/') {
+                        req.url = '/admin/index.html';
+                    }
+                    next();
+                });
+            },
+        },
         tailwindcss(),
         VitePWA({
             registerType: 'autoUpdate',
@@ -42,19 +53,6 @@ export default defineConfig({
                 background_color: '#F8FAFC',
                 shortcuts: [
                     {
-                        name: 'Add Exercise',
-                        short_name: 'Add',
-                        description: 'Add a new exercise',
-                        url: '/add-exercise',
-                        icons: [
-                            {
-                                src: 'icons/pwa-192x192.png',
-                                sizes: '192x192',
-                                type: 'image/png'
-                            }
-                        ]
-                    },
-                    {
                         name: 'View Workouts',
                         short_name: 'Workouts',
                         url: '/workouts',
@@ -67,10 +65,10 @@ export default defineConfig({
                         ]
                     },
                     {
-                        name: 'Manage Days',
-                        short_name: 'Days',
-                        description: 'Manage workout days',
-                        url: '/manage-days',
+                        name: 'Manage Workouts',
+                        short_name: 'Manage',
+                        description: 'Manage workouts via CMS',
+                        url: '/admin/',
                         icons: [
                             {
                                 src: 'icons/pwa-192x192.png',
@@ -79,21 +77,11 @@ export default defineConfig({
                             }
                         ]
                     },
-                    {
-                        name: 'Preferences',
-                        short_name: 'Preferences',
-                        description: 'Manage preferences',
-                        url: '/preferences',
-                        icons: [
-                            {
-                                src: 'icons/pwa-192x192.png'
-                            }
-                        ]
-                    }
+
                 ]
             },
             workbox: {
-                globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+                globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
                 navigateFallback: null,
                 runtimeCaching: [
                     {
@@ -123,6 +111,7 @@ export default defineConfig({
         }),
     ],
     build: {
+        target: 'esnext',
         rollupOptions: {
             input: {
                 index: resolve(__dirname, "index.html"),
@@ -130,7 +119,7 @@ export default defineConfig({
                 workouts: resolve(__dirname, "workouts.html"),
                 'add-exercise': resolve(__dirname, "add-exercise.html"),
                 'manage-days': resolve(__dirname, "manage-days.html"),
-                preferences: resolve(__dirname, "preferences.html")
+
             }
         },
         outDir: 'dist',

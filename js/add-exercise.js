@@ -1,4 +1,5 @@
 import "../css/style.css"
+import { loadPreferences } from './data.js'
 
 // Initialize with prefilled days of the week
 const workoutDays = JSON.parse(localStorage.getItem('workoutDays')) || [];
@@ -589,16 +590,4 @@ if (workoutDays.length === 0) {
     placeholder.classList.remove('hidden');
   }
 
-  // Load preferences
-  function loadPreferences() {
-    const defaultPreferences = {
-      defaultReps: 10,
-      defaultSets: 3,
-      defaultRestDuration: 60,
-      restTimerSound: true
-    };
-    
-    const savedPreferences = localStorage.getItem('preferences');
-    return savedPreferences ? JSON.parse(savedPreferences) : defaultPreferences;
-  }
 } 

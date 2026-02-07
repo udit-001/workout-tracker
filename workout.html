@@ -17,14 +17,14 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
-      <h1 id="currentDay" class="text-lg font-semibold text-gray-700 absolute left-1/2 transform -translate-x-1/2">
+      <h1 id="currentDay" class="text-base md:text-lg font-semibold text-gray-700 absolute left-1/2 transform -translate-x-1/2 max-w-[60%] sm:max-w-[70%] text-center truncate">
         Workout Session</h1>
       <div class="w-10"></div> <!-- Spacer to balance the menu button -->
     </nav>
 
     <!-- Sidebar -->
     <aside id="sidebar"
-      class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-40 w-64 bg-white border-r border-gray-100 shadow-sm md:pt-0">
+      class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-40 w-64 bg-white border-r border-gray-100 shadow-sm md:pt-0 pt-16">
       <div class="p-4 border-b border-gray-100">
         <h1 class="text-xl font-semibold text-gray-700">Lift</h1>
       </div>
@@ -41,15 +41,6 @@
             </a>
           </li>
           <li>
-            <a href="add-exercise.html"
-              class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              Add Exercise
-            </a>
-          </li>
-          <li>
             <a href="workouts.html" class="flex items-center text-blue-600 bg-blue-50 p-2 rounded transition-colors">
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -59,16 +50,16 @@
             </a>
           </li>
           <li>
-            <a href="manage-days.html"
+            <a href="/admin/"
               class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              Manage Days
+              Manage Workouts
             </a>
           </li>
           <li>
-            <a href="preferences.html"
+            <a href="/admin/#/collections/settings/entries/preferences"
               class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

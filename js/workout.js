@@ -1,7 +1,9 @@
 import '../css/style.css'
+import { loadWorkoutDays, loadPreferences, loadBookends } from './data.js'
 
 // Workout Session Logic
-const workoutDays = JSON.parse(localStorage.getItem('workoutDays')) || [];
+const workoutDays = await loadWorkoutDays();
+const allBookends = loadBookends();
 const completedWorkouts = JSON.parse(localStorage.getItem('completedWorkouts')) || [];
 
 // DOM Elements
@@ -23,19 +25,61 @@ const nextExerciseTimerButton = document.getElementById('nextExerciseTimer');
 
 // Workout State
 let currentDayIndex = 0;
-let currentExerciseIndex = 0;
+let currentItemIndex = 0;
 let currentSet = 1;
 let restTimerInterval = null;
 let restSecondsRemaining = 0;
 let isRestTimerRunning = false;
+let workoutItems = [];
 
-// Get day index from URL
+// Build combined workout items list (warmup videos + exercises + cooldown videos)
+function buildWorkoutItems(day) {
+  const items = [];
+  const warmupBookends = allBookends.filter(b => b.type === 'warmup');
+  const cooldownBookends = allBookends.filter(b => b.type === 'cooldown');
+
+  warmupBookends.forEach(b => {
+    b.videos.forEach((video, i) => {
+      items.push({
+        type: 'bookend',
+        bookendType: 'warmup',
+        bookendName: b.name,
+        video,
+        videoIndex: i,
+        videoCount: b.videos.length,
+      });
+    });
+  });
+
+  day.exercises.forEach(ex => {
+    items.push({ type: 'exercise', data: ex });
+  });
+
+  cooldownBookends.forEach(b => {
+    b.videos.forEach((video, i) => {
+      items.push({
+        type: 'bookend',
+        bookendType: 'cooldown',
+        bookendName: b.name,
+        video,
+        videoIndex: i,
+        videoCount: b.videos.length,
+      });
+    });
+  });
+
+  return items;
+}
+
+// Get day from URL
 const urlParams = new URLSearchParams(window.location.search);
-const dayIndex = parseInt(urlParams.get('day'));
+const dayParam = urlParams.get('day');
+const dayIndex = workoutDays.findIndex(d => d.slug === dayParam);
 
-// Initialize workout if day index is valid
-if (dayIndex >= 0 && dayIndex < workoutDays.length && workoutDays[dayIndex].exercises.length > 0) {
+// Initialize workout if day is valid
+if (dayIndex >= 0 && workoutDays[dayIndex].exercises.length > 0) {
   currentDayIndex = dayIndex;
+  workoutItems = buildWorkoutItems(workoutDays[currentDayIndex]);
   startWorkout();
 } else {
   window.location.href = 'workouts.html';
@@ -123,21 +167,12 @@ function restartRestTimer() {
   startRestTimer();
 }
 
-// Load preferences
-function loadPreferences() {
-  const savedPreferences = localStorage.getItem('preferences');
-  return savedPreferences ? JSON.parse(savedPreferences) : {
-    defaultReps: 10,
-    defaultSets: 3,
-    defaultRestDuration: 60,
-    restTimerSound: true
-  };
-}
-
 // Function to complete a set
 function completeSet() {
-  const exercise = workoutDays[currentDayIndex].exercises[currentExerciseIndex];
+  const item = workoutItems[currentItemIndex];
+  if (item.type !== 'exercise') return;
 
+  const exercise = item.data;
   const setDisplay = document.getElementById('setDisplay');
   
   if (currentSet < exercise.sets) {
@@ -145,9 +180,8 @@ function completeSet() {
     setDisplay.textContent = `Set ${currentSet} of ${exercise.sets}`;
     showRestTimer();
   } else {
-    // Move to next exercise if all sets are complete
-    if (currentExerciseIndex < workoutDays[currentDayIndex].exercises.length - 1) {
-      currentExerciseIndex++;
+    if (currentItemIndex < workoutItems.length - 1) {
+      currentItemIndex++;
       currentSet = 1;
       updateWorkoutView();
     }
@@ -165,8 +199,8 @@ startRestTimerButton.addEventListener('click', () => {
 
 // Add event listeners for timer bar navigation
 prevExerciseTimerButton.addEventListener('click', () => {
-  if (currentExerciseIndex > 0) {
-    currentExerciseIndex--;
+  if (currentItemIndex > 0) {
+    currentItemIndex--;
     currentSet = 1;
     updateWorkoutView();
     stopRestTimer();
@@ -174,8 +208,8 @@ prevExerciseTimerButton.addEventListener('click', () => {
 });
 
 nextExerciseTimerButton.addEventListener('click', () => {
-  if (currentExerciseIndex < workoutDays[currentDayIndex].exercises.length - 1) {
-    currentExerciseIndex++;
+  if (currentItemIndex < workoutItems.length - 1) {
+    currentItemIndex++;
     currentSet = 1;
     updateWorkoutView();
     stopRestTimer();
@@ -184,8 +218,8 @@ nextExerciseTimerButton.addEventListener('click', () => {
 
 // Update timer bar navigation button visibility
 function updateTimerBarNavigation() {
-  prevExerciseTimerButton.style.visibility = currentExerciseIndex === 0 ? 'hidden' : 'visible';
-  nextExerciseTimerButton.style.visibility = currentExerciseIndex === workoutDays[currentDayIndex].exercises.length - 1 ? 'hidden' : 'visible';
+  prevExerciseTimerButton.style.visibility = currentItemIndex === 0 ? 'hidden' : 'visible';
+  nextExerciseTimerButton.style.visibility = currentItemIndex === workoutItems.length - 1 ? 'hidden' : 'visible';
 
   if (nextExerciseTimerButton.style.visibility === 'hidden') {
     endWorkoutButton.classList.remove('hidden');
@@ -196,38 +230,61 @@ function updateTimerBarNavigation() {
   }
 }
 
-// Update the workout view with current exercise
-function updateWorkoutView() {
+// Render a bookend view (warmup or cooldown) — one video at a time
+function renderBookendView(item) {
+  const isWarmup = item.bookendType === 'warmup';
+  const badgeBg = isWarmup ? 'bg-orange-50' : 'bg-teal-50';
+  const badgeText = isWarmup ? 'text-orange-600' : 'text-teal-600';
+  const video = item.video;
+
+  currentExercise.innerHTML = `
+    <div class="flex items-center gap-2 mb-4">
+      <h3 class="min-w-0 truncate text-lg sm:text-xl md:text-2xl font-bold text-gray-700">${video.title}</h3>
+      <div class="flex shrink-0 items-center gap-2">
+        <div class="flex items-center ${badgeBg} px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">
+          <span class="${badgeText} font-medium text-xs sm:text-sm capitalize">${item.bookendType} ${item.videoIndex + 1}/${item.videoCount}</span>
+        </div>
+        <div class="flex items-center bg-gray-50 px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">
+          <span class="text-gray-600 font-medium text-xs sm:text-base sm:hidden">${currentItemIndex + 1}/${workoutItems.length}</span>
+          <span class="text-gray-600 font-medium text-base hidden sm:inline">${currentItemIndex + 1} of ${workoutItems.length}</span>
+        </div>
+      </div>
+    </div>
+    <div class="aspect-video">
+      <iframe class="w-full h-full rounded" src="https://www.youtube-nocookie.com/embed/${getYouTubeId(video.url)}" frameborder="0" allow="encrypted-media" allowfullscreen></iframe>
+    </div>
+  `;
+}
+
+// Render an exercise view
+function renderExerciseView(item) {
   const day = workoutDays[currentDayIndex];
-  const exercise = day.exercises[currentExerciseIndex];
-  
-  currentDay.textContent = day.name;
-  desktopCurrentDay.textContent = day.name;
-  
-  // Format reps display
+  const exercise = item.data;
+
   let repsDisplay = '';
   if (exercise.minReps && exercise.maxReps) {
     repsDisplay = `${exercise.minReps}-${exercise.maxReps} reps`;
   } else if (exercise.reps) {
     repsDisplay = `${exercise.reps} reps`;
   }
-  
+
   currentExercise.innerHTML = `
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-2xl font-bold text-gray-700">${exercise.name}</h3>
-      <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 mb-4">
+      <h3 class="min-w-0 truncate text-lg sm:text-xl md:text-2xl font-bold text-gray-700">${exercise.name}</h3>
+      <div class="flex shrink-0 items-center gap-2">
         ${exercise.notes ? `
           <button id="showNotes" class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100" title="View Notes">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 sm:w-5 sm:h-5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
             </svg>
           </button>
         ` : ''}
-        <div class="flex items-center bg-gray-50 px-3 py-1 rounded-full">
-          <svg class="w-4 h-4 text-gray-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-center bg-gray-50 px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">
+          <svg class="hidden sm:block w-4 h-4 text-gray-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-          <span class="text-gray-600 font-medium">${currentExerciseIndex + 1} of ${day.exercises.length}</span>
+          <span class="text-gray-600 font-medium text-xs sm:text-base sm:hidden">${currentItemIndex + 1}/${workoutItems.length}</span>
+          <span class="text-gray-600 font-medium text-base hidden sm:inline">${currentItemIndex + 1} of ${workoutItems.length}</span>
         </div>
       </div>
     </div>
@@ -262,8 +319,7 @@ function updateWorkoutView() {
       </div>
     </div>
   `;
-  
-  // Add event listener for notes button if it exists
+
   const showNotesButton = document.getElementById('showNotes');
   if (showNotesButton) {
     showNotesButton.addEventListener('click', () => {
@@ -272,21 +328,33 @@ function updateWorkoutView() {
       notesModal.classList.remove('hidden');
       notesModal.classList.add('fixed');
 
-      // Add modal event listeners
       const closeNotesModal = document.getElementById('closeNotesModal');
       closeNotesModal.addEventListener('click', closeModal);
       notesModal.addEventListener('click', handleModalClick);
       document.addEventListener('keydown', handleEscapeKey);
     });
   }
-  
-  // Add event listener for complete set button
+
   const completeSetButton = document.getElementById('completeSet');
   if (completeSetButton) {
     completeSetButton.addEventListener('click', completeSet);
   }
+}
 
-  // Update timer bar navigation visibility
+// Update the workout view with current item
+function updateWorkoutView() {
+  const day = workoutDays[currentDayIndex];
+  const item = workoutItems[currentItemIndex];
+  
+  currentDay.textContent = day.name;
+  desktopCurrentDay.textContent = day.name;
+
+  if (item.type === 'bookend') {
+    renderBookendView(item);
+  } else {
+    renderExerciseView(item);
+  }
+
   updateTimerBarNavigation();
 }
 
@@ -328,19 +396,3 @@ endWorkoutButton.addEventListener('click', () => {
   workoutView.classList.add('hidden');
   workoutComplete.classList.remove('hidden');
 });
-
-// Function to save workout data with a unique ID
-function saveWorkout(workout) {
-  workout.id = Date.now();
-  workoutDays.push(workout);
-  localStorage.setItem('workoutDays', JSON.stringify(workoutDays));
-}
-
-// Example of how to use saveWorkout
-// saveWorkout({
-//   name: "Workout Name",
-//   exercises: [
-//     { name: "Exercise 1", reps: 10, sets: 3, video: "https://youtube.com/...", notes: "Some notes" },
-//     { name: "Exercise 2", reps: 12, sets: 4, video: "https://youtube.com/...", notes: "More notes" }
-//   ]
-// }); 
