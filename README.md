@@ -5,7 +5,7 @@ A simple, minimal workout tracker that runs as a PWA. Manage your workout routin
 ## Features
 
 - **Progressive Web App** — install on your phone, works offline
-- **Built-in CMS** — manage workout days, exercises, and bookend routines (warmup/cooldown) via Decap CMS
+- **Built-in CMS** — manage workout days, exercises, and bookend routines (warmup/cooldown) via Sveltia CMS
 - **Rest Timer** — configurable rest duration with sound notification
 - **Customizable Defaults** — set default reps, sets, and rest duration in preferences
 
@@ -48,4 +48,4 @@ pnpm preview
 - [Vite](https://vite.dev/) — build tool
 - [Tailwind CSS](https://tailwindcss.com/) v4 — styling
 - [Vite PWA](https://vite-pwa-org.netlify.app/) — service worker and PWA support
-- [Decap CMS](https://decapcms.org/) — git-based content management
+- [Sveltia CMS](https://sveltiacms.app/) — git-based content management
