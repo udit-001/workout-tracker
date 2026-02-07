@@ -19,6 +19,10 @@ A simple, minimal workout tracker that runs as a PWA. Manage your workout routin
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/udit-001/workout-tracker)
 
+### Deploy to Cloudflare Pages
+
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/udit-001/workout-tracker)
+
 ## Staying Updated
 
 This template includes a GitHub Actions workflow (`.github/workflows/sync-template.yml`) that automatically syncs updates from the upstream template.
