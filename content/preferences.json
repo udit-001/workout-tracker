@@ -1,0 +1,8 @@
+{
+  "defaultReps": 10,
+  "defaultMinReps": null,
+  "defaultMaxReps": null,
+  "defaultSets": 3,
+  "defaultRestDuration": 60,
+  "restTimerSound": true
+}
