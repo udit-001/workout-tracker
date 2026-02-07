@@ -51,15 +51,19 @@ jobs:
             gh pr create \
               --title "chore: sync updates from template" \
               --body "Automated PR to sync latest changes from the [workout-tracker template](https://github.com/udit-001/workout-tracker-app)." \
-              --base main \
+              --base master \
               --head "$BRANCH" || cleanup_branch
           else
-            echo "Merge conflicts detected. Manual resolution needed."
-            git merge --abort
+            echo "Merge conflicts detected. Creating PR with conflicts."
+
+            # Create a commit (even with conflict markers) so the branch differs from master.
+            git add -A
+            git commit -m "chore: sync updates from template (conflicts)" --no-edit || true
+
             git push origin "$BRANCH"
             gh pr create \
               --title "chore: sync updates from template (conflicts)" \
               --body "Automated PR to sync latest changes from the [workout-tracker template](https://github.com/udit-001/workout-tracker-app). ⚠️ This PR has merge conflicts that need manual resolution." \
-              --base main \
+              --base master \
               --head "$BRANCH" || cleanup_branch
           fi
