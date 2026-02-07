@@ -19,10 +19,19 @@ A minimal PWA workout tracker. Manage routines via a built-in CMS, track sets/re
 
 ## Staying Updated
 
-Enable the included GitHub Actions workflows (**Actions → Enable workflow**):
+This template includes GitHub Actions workflows that keep your copy in sync:
 
 - **Sync from Template** — pulls upstream updates weekly (Sundays) via PR
 - **Sync CMS Defaults** — updates CMS config when preferences change
+
+### Setup
+
+1. Go to your repository on GitHub
+2. Navigate to **Settings → Actions → General** ([docs](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository#configuring-the-default-github_token-permissions))
+3. Under **Workflow permissions**, select **"Read and write permissions"**
+4. Check **"Allow GitHub Actions to create and approve pull requests"**
+5. Click **Save**
+6. Go to the **Actions** tab and enable both workflows
 
 Your `content/` data won't conflict. Manual trigger: **Actions → Sync from Template → Run workflow**.
 
