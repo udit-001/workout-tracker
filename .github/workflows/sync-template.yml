@@ -18,10 +18,11 @@ jobs:
 
       - name: Sync from template
         run: |
-          git remote add template https://github.com/udit-001/workout-tracker-app.git || true
-          git fetch template
+          git remote add template https://github.com/udit-001/workout-tracker-app.git 2>/dev/null || true
+          git remote set-url template https://github.com/udit-001/workout-tracker-app.git
+          git fetch template || { echo "::error::Failed to fetch from template repo"; exit 1; }
 
-          if git diff --quiet HEAD...template/main; then
+          if git diff --quiet HEAD template/main; then
             echo "Already up to date"
             echo "HAS_CHANGES=false" >> "$GITHUB_ENV"
           else
